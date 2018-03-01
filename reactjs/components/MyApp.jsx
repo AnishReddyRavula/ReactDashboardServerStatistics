@@ -55,7 +55,7 @@ var value = '';
         data: data1
     };
 
-    export default class GithubRepos extends React.Component{
+    var MyApp = React.createClass({
 
         getInitialState: function () {
         console.log("inited");
@@ -65,13 +65,15 @@ var value = '';
             };
         },
 
-        handleChange: function (event) {
+        handleClick: function (event) {
 
         const target = event.target;
         var is_check = target.checked;
         var value = target.value;
+        var enco_key = encodeURIComponent(value);
         if(is_check == true){
-        	fetch('http://127.0.0.1:8000/details'+'?ap='+value,{
+        	fetch(`http://127.0.0.1:8000/details?ap=${enco_key}`,{
+        	
 		      method:"GET"})
 		          .then(function(response) {
 		              return response.json()
@@ -106,6 +108,8 @@ var value = '';
             if (this.state.filterSource == 'btn-update-data') {
             console.log(this.state.filterSource);
                 revenueChartConfigs.dataSource.data = data1
+                revenueChartConfigs.dataSource.chart.caption = "data1"
+
             } else {
             console.log(this.state.filterSource, "123");
                 revenueChartConfigs.dataSource.data = data_123;
@@ -118,19 +122,19 @@ var value = '';
 		                <div>
 		                    <ReactFC {...revenueChartConfigs} />
 		                    <input type="radio" name="same" id='btn-update-data'
-		                        onChange={this.handleChange}
+		                        onChange={this.handleClick}
 		                        className='btn btn-default' value="sales"
 		                       checked={this.props.checked}>{'Click me to change data'}</input>
 		                       <input type="radio" name="same" id='btn-update-data'
-		                        onChange={this.handleChange}
+		                        onChange={this.handleClick}
 		                        className='btn btn-default' value="python"
 		                       checked={this.props.checked}>{'Click me to change data'}</input>
 		                       <input type="radio" name="same" id='btn-update-data'
-		                        onChange={this.handleChange}
+		                        onChange={this.handleClick}
 		                        className='btn btn-default' value="cool"
 		                       checked={this.props.checked}>{'Click me to change data'}</input>
 		                       <input type="radio" name="same" id='btn-update-data'
-		                        onChange={this.handleChange}
+		                        onChange={this.handleClick}
 		                        className='btn btn-default' value="best"
 		                       checked={this.props.checked}>{'Click me to change data'}</input>
 		                </div>
@@ -139,7 +143,10 @@ var value = '';
 			</div>
             );
         }
-    }
+    });
     
-
+    ReactDOM.render(
+    <MyApp />,
+    document.getElementById('chart-container')
+);
 

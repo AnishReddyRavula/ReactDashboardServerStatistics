@@ -74,7 +74,7 @@ export default class App1Container extends React.Component {
             {github.repos !== undefined &&
               <GithubRepos repos={github.repos} />
             }
-            <MyApp/>
+            
           </div>
         </div>
       </div>
