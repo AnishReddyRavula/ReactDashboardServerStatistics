@@ -4,7 +4,13 @@
 {% block main %}
 
 <div id="App1"></div>
-<div id="chart-container"></div>
+<div classname="container">
+    <div classname="row">
+      <div classname="col-sm-12">
+      	<div id="chart-container"></div>
+      </div>
+  </div>
+</div>
 {% render_bundle 'vendors' %}
 {% render_bundle 'App1' %}
 <script src="https://cdn.ovo.ua/pub/fusioncharts/fusioncharts.charts.js"></script> 

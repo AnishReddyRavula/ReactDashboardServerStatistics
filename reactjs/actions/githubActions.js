@@ -7,7 +7,7 @@ export const FETCH_REPOS_ERROR500 = "FETCH_REPOS_ERROR500"
 export const FETCH_REPOS_FAILURE = "FETCH_REPOS_FAILURE"
 export function fetchRepos() {
   return function (dispatch) {
-    let url = "http://127.0.0.1:8000/details"
+    let url = "http://127.0.0.1:8000/details?ap=BT"
     dispatch({type: FETCH_REPOS})
     return request(
       url, {},

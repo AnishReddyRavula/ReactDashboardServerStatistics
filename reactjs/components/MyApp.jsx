@@ -43,7 +43,7 @@ var value = '';
 
 
 
-FusionCharts.ready(function () {
+
 
     var myDataSource = {
         chart: {
@@ -52,10 +52,10 @@ FusionCharts.ready(function () {
             numberPrefix: '$',
             theme: 'ocean'
         },
-        data: ''
+        data: data1
     };
 
-    var MyApp = React.createClass({
+    export default class GithubRepos extends React.Component{
 
         getInitialState: function () {
         console.log("inited");
@@ -81,17 +81,12 @@ FusionCharts.ready(function () {
 		              
 		             
 		          })
-	        console.log(is_check);
-	            this.setState({
+	        this.setState({
 	                filterSource: 'btn-update-data'
 	            });
+	            
         }
-         else{
-         console.log(is_check);
-        this.setState({
-                filterSource: 'a'
-            });
-        }
+      
 
         },
                
@@ -110,38 +105,41 @@ FusionCharts.ready(function () {
              console.log(data1);
             if (this.state.filterSource == 'btn-update-data') {
             console.log(this.state.filterSource);
-                revenueChartConfigs.dataSource.data = data_321
+                revenueChartConfigs.dataSource.data = data1
             } else {
             console.log(this.state.filterSource, "123");
                 revenueChartConfigs.dataSource.data = data_123;
             }
 
             return (
-                <div>
-                    <ReactFC {...revenueChartConfigs} />
-                    <input type="radio" name="same" id='btn-update-data'
-                        onChange={this.handleChange}
-                        className='btn btn-default' value="sales"
-                       checked={this.props.checked}>{'Click me to change data'}</input>
-                       <input type="radio" name="same" id='btn-update-data'
-                        onChange={this.handleChange}
-                        className='btn btn-default' value="python"
-                       checked={this.props.checked}>{'Click me to change data'}</input>
-                       <input type="radio" name="same" id='btn-update-data'
-                        onChange={this.handleChange}
-                        className='btn btn-default' value="cool"
-                       checked={this.props.checked}>{'Click me to change data'}</input>
-                       <input type="radio" name="same" id='btn-update-data'
-                        onChange={this.handleChange}
-                        className='btn btn-default' value="best"
-                       checked={this.props.checked}>{'Click me to change data'}</input>
-                </div>
+            <div className="container">
+		        <div className="row">
+		          <div className="col-sm-12">
+		                <div>
+		                    <ReactFC {...revenueChartConfigs} />
+		                    <input type="radio" name="same" id='btn-update-data'
+		                        onChange={this.handleChange}
+		                        className='btn btn-default' value="sales"
+		                       checked={this.props.checked}>{'Click me to change data'}</input>
+		                       <input type="radio" name="same" id='btn-update-data'
+		                        onChange={this.handleChange}
+		                        className='btn btn-default' value="python"
+		                       checked={this.props.checked}>{'Click me to change data'}</input>
+		                       <input type="radio" name="same" id='btn-update-data'
+		                        onChange={this.handleChange}
+		                        className='btn btn-default' value="cool"
+		                       checked={this.props.checked}>{'Click me to change data'}</input>
+		                       <input type="radio" name="same" id='btn-update-data'
+		                        onChange={this.handleChange}
+		                        className='btn btn-default' value="best"
+		                       checked={this.props.checked}>{'Click me to change data'}</input>
+		                </div>
+		               </div>
+            	</div>
+			</div>
             );
         }
-    });
+    }
     
-    ReactDOM.render(
-    <MyApp />,
-    document.getElementById('chart-container')
-);
-});
+
+

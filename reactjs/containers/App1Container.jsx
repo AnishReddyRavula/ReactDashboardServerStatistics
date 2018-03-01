@@ -29,6 +29,7 @@ const styles = {
 @connect(state => ({
   counters: state.counters,
   github: state.github,
+  myapp: state.myapp,
 }))
 @Radium
 export default class App1Container extends React.Component {
@@ -73,7 +74,7 @@ export default class App1Container extends React.Component {
             {github.repos !== undefined &&
               <GithubRepos repos={github.repos} />
             }
-            
+            <MyApp/>
           </div>
         </div>
       </div>
