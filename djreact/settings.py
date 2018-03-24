@@ -25,7 +25,7 @@ SECRET_KEY = 'iu#wd)esfl&b0r)y4(=^mkvegwaecx3evu@t=o)zt-0ld0t0tb'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 from django.conf.global_settings import DATETIME_INPUT_FORMATS
 
@@ -140,7 +140,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 
 # Static files (CSS, JavaScript, Images)

@@ -8,10 +8,19 @@
     <div classname="row">
       <div classname="col-sm-12">
       	<div id="chart-container"></div>
+      	     <div className="container">
+      <div className="row">
+        <div className="col-sm-12">
+
+      	<div id="date-container"></div>
+      	 </div>
+      </div>
+      </div>
       </div>
   </div>
 </div>
 {% render_bundle 'vendors' %}
 {% render_bundle 'App1' %}
 <script src="https://cdn.ovo.ua/pub/fusioncharts/fusioncharts.charts.js"></script> 
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/react-datepicker/1.2.2/react-datepicker.js"></script>
 {% endblock %}

@@ -2,17 +2,24 @@ from django.db import models
 
 
 class ServerDetails(models.Model):
-	id_no = models.IntegerField()
 	department_name = models.CharField(max_length=140) #finance
-	metric = models.CharField(max_length=140) #avg-cpu
+	SERVER_METRICS = (
+		('AVG_CPU', 'Avg CPU'),
+		('AVG_RAM', 'Avg RAM'),
+		('DISK_USED', 'Disk Usage'),
+		('MAX_CPU', 'Max CPU'),
+		('MAX_RAM', 'Max RAM'),
+	)
+	metric = models.CharField(max_length=140, choices=SERVER_METRICS) #avg-cpu
 
 	def __str__(self):
-		return self.department_name, self.metric
+		return str(self.department_name)
 
 class ServerUsage(models.Model):
-	entry_id = models.IntegerField()
+	server_name = models.CharField(max_length=100)
 	detail = models.ForeignKey(ServerDetails, on_delete=models.CASCADE)
 	date_time = models.DateTimeField(auto_now=False)
 	units = models.PositiveSmallIntegerField()
+
 	def __str__(self):
-		return self.detail, self.date_time, self.units
+		return str(self.units)
