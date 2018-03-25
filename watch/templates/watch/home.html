@@ -8,8 +8,6 @@
 		<script type="text/javascript" src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
 		<link rel="stylesheet" type="text/css" href="{% static 'css/semantic.css' %}">
 		<script type="text/javascript" src="{% static 'js/semantic.js' %}"></script>
-		<script type="text/javascript" src="{% static 'js/highcharts.js' %}"></script>
-		<script type="text/javascript" src="{% static 'js/stock.js' %}"></script>
 		<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 		<title>LeanKloud</title>
 		<script type="text/javascript">
@@ -42,7 +40,7 @@
 			function mean_all_graph(company) {
 				$('#tester').empty();
 				$("#none").prop("checked", true);
-				Plotly.d3.json(company, function(err, rows){
+				Plotly.d3.json("/check/"+company, function(err, rows){
 					
 				var data_ =[];
 				 $.each(rows,function(i,v){
@@ -99,7 +97,7 @@
 				var data = [trace1,trace2,trace3, trace4, trace5];
 			
 				var layout = {
-				  title: 'Time Series with Rangeslider',
+				  title: comp,
 				  xaxis: {
 				    // autorange: true,
 				    range: [data_[1].date_time[0], data_[1].date_time[data_[1].date_time.length-1]],
@@ -187,7 +185,7 @@
 			
 				function new_graph(company, metric, server){
 					$('#tester').empty();
-					Plotly.d3.json(company+"/"+metric+"/"+server, function(err, rows){
+					Plotly.d3.json("/check/"+company+"/"+metric+"/"+server, function(err, rows){
 					 
 					var data_ =[];
 					$.each(rows,function(i,v){
@@ -208,7 +206,7 @@
 				var data = [trace1];
 			
 				var layout = {
-				  title: 'Time Series with Rangeslider',
+				  title: comp,
 				  xaxis: {
 				    // autorange: true,
 				    range: [data_[0].date_time[0], data_[0].date_time[data_[0].date_time.length-1]],
