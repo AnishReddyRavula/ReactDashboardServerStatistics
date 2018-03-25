@@ -123,24 +123,27 @@ def get_data(request, company=None, metric=None, server=None):
 
 	for metric in metrics:
 		returning_json[metric] = OrderedDict()
+		
 	if company is not None:
 		for metric_temp in metrics:
+
 			if (server) and (server != 'Mean'):
-				print(company, metric_temp, server)
+				# print(company, metric_temp, server)
 				server_usage = ServerUsage.objects.filter(detail_id__department_name = company, detail_id__metric = metric_temp, server_name = server).order_by('date_time').annotate(dcount = Count('date_time')).values('date_time').annotate(score = Avg('units'))	
 			elif server is 'Mean':
-				print(company, metric_temp)
+				# print(company, metric_temp)
 				server_usage = ServerUsage.objects.filter(detail_id__department_name = company, detail_id__metric = metric_temp).order_by('date_time').annotate(dcount = Count('date_time')).values('date_time').annotate(score = Avg('units'))	
 			else:
 				server_usage = ServerUsage.objects.filter(detail_id__department_name = company, detail_id__metric = metric_temp).order_by('date_time').annotate(dcount = Count('date_time')).values('date_time').annotate(score = Avg('units'))
 			date_ = []
 			usage = []
-			print(server_usage)
+			# print(server_usage)
 			for each_server in server_usage:
 				date_.append(each_server['date_time'])
 				usage.append(each_server['score'])
 			returning_json[metric_temp]['date_time'] = date_
 			returning_json[metric_temp]['usage'] = usage
+
 	total_time = time() - start
 	print(total_time)
 	return JsonResponse(returning_json, safe=False)
