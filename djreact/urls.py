@@ -21,6 +21,9 @@ from django.views import generic
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+
+    url(r'^data/(?P<company>[A-Za-z-]*)$',views.parse_csv, name= 'parse'),
+
     url(r'check$', views.index, name='sd'),
 
     # url(r'check/(?P<company>[A-Za-z_-]*)$', views.get_data, name='getdata'),

@@ -111,10 +111,10 @@ WSGI_APPLICATION = 'djreact.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-         # 'NAME': 'watch',
+         'NAME': 'watch',
         'USER': 'root',
         'PASSWORD': 'lopkol.1',
-        'HOST': 'watch.ck6nb9eku8jf.us-west-2.rds.amazonaws.com',
+        'HOST': 'localhost',
         'PORT': 3306,
     }
 }
