@@ -99,6 +99,15 @@ WSGI_APPLICATION = 'djreact.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.9/ref/settings/#databases
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#          'NAME': 'watch',
+#         'USER': 'root',
+#         'PASSWORD': 'lopkol',
+#         'HOST': '127.0.0.1',
+#     }
+# }
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
