@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		{% load staticfiles %}
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		<meta name="description" content="">
+		<meta name="author" content="">
+		<script type="text/javascript" src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+		<link rel="stylesheet" type="text/css" href="{% static 'css/semantic.css' %}">
+		<script type="text/javascript" src="{% static 'js/semantic.js' %}"></script>
+		<script type="text/javascript" src="{% static 'js/highcharts.js' %}"></script>
+		<script type="text/javascript" src="{% static 'js/stock.js' %}"></script>
+		<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+		<title>LeanKloud</title>
+		<script type="text/javascript">
+			$(document).ready(function(){
+				var server_data = "";
+				$("#loader").hide();
+			
+				$(".company_check").click(function(){
+					$('#tester').empty();
+					comp = $(this).attr('id');
+					console.log(comp);
+					che = obj[comp];
+			 		document.getElementById('comp_server').innerHTML = '';
+			 		var s2 = document.getElementById('comp_server');
+			        for(var l in che){
+			   
+						var newOption = document.createElement("option");
+				        newOption.value = che[l];
+				        newOption.innerHTML = che[l];
+						s2.options.add(newOption);
+			        }
+			        var metric_data = "";
+					server_data = $('#comp_server').find(":selected").text();
+			        // work with key and value
+			        $("#loader").show();
+			        mean_all_graph($(this).attr('id'));
+			});
+			
+			
+			function mean_all_graph(company) {
+				$('#tester').empty();
+				$("#none").prop("checked", true);
+				Plotly.d3.json("/check/"+company, function(err, rows){
+					
+				var data_ =[];
+				 $.each(rows,function(i,v){
+				 	
+				       data_.push(v);
+				     	
+				      
+				     });
+				var trace1 = {
+				  type: "scatter",
+				  mode: "lines",
+				  name: 'AVG CPU',
+				  x:data_[0].date_time,
+				  y: data_[0].usage,
+				  line: {color: '#17BECF'}
+				}
+			
+				var trace2 = {
+				  type: "scatter",
+				  mode: "lines",
+				  name: 'AVG RAM',
+				  x:data_[1].date_time,
+				  y: data_[1].usage,
+				  line: {color: '#FFFF00'}
+				}
+			
+				var trace3 = {
+				  type: "scatter",
+				  mode: "lines",
+				  name: 'DISK USED',
+				  x:data_[2].date_time,
+				  y: data_[2].usage,
+				  line: {color: '#34495E'}
+				}
+				var trace4 = {
+				  type: "scatter",
+				  mode: "lines",
+				  name: 'MAX CPU',
+				  x:data_[3].date_time,
+				  y: data_[3].usage,
+				  line: {color: '#FF0000'}
+				}
+				var trace5 = {
+				  type: "scatter",
+				  mode: "lines",
+				  name: 'MAX RAM',
+				  x:data_[4].date_time,
+				  y: data_[4].usage,
+				  line: {color: '#000000'}
+				}
+				// alert(data_[1].date_time);
+			
+				// alert(maxDate);
+				var data = [trace1,trace2,trace3, trace4, trace5];
+			
+				var layout = {
+				  title: 'Time Series with Rangeslider',
+				  xaxis: {
+				    // autorange: true,
+				    range: [data_[1].date_time[0], data_[1].date_time[data_[1].date_time.length-1]],
+				    rangeselector: {buttons: [
+				        {
+				          count: 7,
+				          label: '1w',
+				          step: 'day',
+				          stepmode: 'backward'
+				        },
+				        {
+				          count: 14,
+				          label: '2w',
+				          step: 'day',
+				          stepmode: 'backward'
+				        },
+				        {
+				          count: 21,
+				          label: '3w',
+				          step: 'day',
+				          stepmode: 'backward'
+				        },
+				        {
+				          count: 1,
+				          label: '1m',
+				          step: 'month',
+				          stepmode: 'backward'
+				        },
+			
+				        {step: 'all'}
+				      ]},
+				    rangeslider: {range: [data_[1].date_time[0], data_[1].date_time[data_[1].date_time.length-1]]},
+				    type: 'date'
+				  },
+				  yaxis: {
+				    autorange: true,
+				    // range: [0,100],
+				    type: 'linear'
+				  }
+				};
+			
+				Plotly.newPlot('tester', data, layout);
+				$("#loader").hide();
+				 // document.getElementById("loader").style.display = "none";
+				})
+			}
+				var comp = ""
+				var metric_data = "";
+				var b = '{{servers|safe}}'
+				obj = JSON.parse(b);
+			
+				
+				
+				$("#comp_server").change(function(){   
+					server_data = $(this).val();
+					
+					if (check_empty(metric_data, server_data, comp) ) {
+						$("#loader").show();
+							new_graph(comp, metric_data, server_data);
+					}
+					// server_data = document.getElementById("comp_server option:selected").val();
+					// console.log(server_data);
+					// if (metric_data != "none") {
+					// 	new_graph(comp, server_data, metric_data)
+					// }
+				});
+				$(".metric_cls").change(function(){   
+					metric_data = $(this).attr('id');
+					console.log(server_data, comp, metric_data);
+					if (check_empty(metric_data, server_data, comp) ) {
+						$("#loader").show();
+						new_graph(comp, metric_data, server_data);
+					}
+				});
+			
+				function check_empty(company, metric, server){
+					if (company != "" && metric != "" && server != "") {
+						return true;
+					}
+					else{
+						return false;	
+					}
+					
+				}
+			
+				function new_graph(company, metric, server){
+					$('#tester').empty();
+					Plotly.d3.json("/check/"+company+"/"+metric+"/"+server, function(err, rows){
+					 
+					var data_ =[];
+					$.each(rows,function(i,v){
+					    data_.push(v);
+			    	});
+					var trace1 = {
+					  type: "scatter",
+					  mode: "lines",
+					  name: 'AAPL High',
+					  x:data_[0].date_time,
+					  y: data_[0].usage,
+					  line: {color: '#17BECF'}
+					}
+			
+			// alert(data_[1].date_time);
+			
+			// alert(maxDate);
+				var data = [trace1];
+			
+				var layout = {
+				  title: 'Time Series with Rangeslider',
+				  xaxis: {
+				    // autorange: true,
+				    range: [data_[0].date_time[0], data_[0].date_time[data_[0].date_time.length-1]],
+				    rangeselector: {buttons: [
+				        {
+				          count: 7,
+				          label: '1w',
+				          step: 'day',
+				          stepmode: 'backward'
+				        },
+				        {
+				          count: 14,
+				          label: '2w',
+				          step: 'day',
+				          stepmode: 'backward'
+				        },
+				        {
+				          count: 21,
+				          label: '3w',
+				          step: 'day',
+				          stepmode: 'backward'
+				        },
+				        {
+				          count: 1,
+				          label: '1m',
+				          step: 'month',
+				          stepmode: 'backward'
+				        },
+			
+				        {step: 'all'}
+				      ]},
+				    rangeslider: {range: [data_[0].date_time[0], data_[0].date_time[data_[0].date_time.length-1]]},
+				    type: 'date'
+				  },
+				  yaxis: {
+				    autorange: true,
+				    // range: [0,100],
+				    type: 'linear'
+				  }
+				};
+			
+				Plotly.newPlot('tester', data, layout);
+				 $("#loader").hide();
+				})
+					}
+			
+				 // $.get("{% url 'get_servers' %}", function(data){
+			  //       var s = eval(data);
+			  //       for (var key in s) {
+					//     if (s.hasOwnProperty(key)) { // this will check if key is owned by data object and not by any of it's ancestors
+					//         alert(key+': '+s[key]); // this will show each key with it's value
+					//     }
+					// }
+			  //   });
+			
+			});
+			
+		</script>
+		<style type="text/css">
+			/* Center the loader */
+			#loader {
+			position: absolute;
+			left: 50%;
+			top: 50%;
+			z-index: 1;
+			width: 150px;
+			height: 150px;
+			margin: -75px 0 0 -75px;
+			border: 16px solid #f3f3f3;
+			border-radius: 50%;
+			border-top: 16px solid #3498db;
+			width: 120px;
+			height: 120px;
+			-webkit-animation: spin 2s linear infinite;
+			animation: spin 2s linear infinite;
+			}
+			@-webkit-keyframes spin {
+			0% { -webkit-transform: rotate(0deg); }
+			100% { -webkit-transform: rotate(360deg); }
+			}
+			@keyframes spin {
+			0% { transform: rotate(0deg); }
+			100% { transform: rotate(360deg); }
+			}
+			/* Add animation to "page content" */
+			.animate-bottom {
+			position: relative;
+			-webkit-animation-name: animatebottom;
+			-webkit-animation-duration: 1s;
+			animation-name: animatebottom;
+			animation-duration: 1s
+			}
+			@-webkit-keyframes animatebottom {
+			from { bottom:-100px; opacity:0 } 
+			to { bottom:0px; opacity:1 }
+			}
+			@keyframes animatebottom { 
+			from{ bottom:-100px; opacity:0 } 
+			to{ bottom:0; opacity:1 }
+			}
+			#myDiv {
+			display: none;
+			text-align: center;
+			}
+		</style>
+	</head>
+	<body>
+		<center>
+		<h1 class="ui center aligned header">LeanKloud Server Analytics</h1>
+		<h2 class="ui center aligned header">Select options to visualize</h2>
+		<!-- <h3 class="ui center aligned header">Container</h3> -->
+		<br>
+		<br>
+		<div class="ui container">
+			<!-- <div class="ui segments"> -->
+				<div class="ui form">
+					<div class="inline fields">
+						<label for="fruit"><span style="font-size: 15px"><b>Select Company</b></span></label>
+						{% for id, company in companies.items %}
+						<div class="field">
+							<div class="ui radio checkbox">
+								<input type="radio" name="company" class="company_check" id={{id}} {% if forloop.counter == 1 %}{% endif %} tabindex="0" class="hidden" >
+								<label>{{company}}</label>
+							</div>
+						</div>
+						{% endfor %}
+					</div>
+					<div class="ui form">
+						<div class="inline fields">
+							<label for="fruit"<span style="font-size: 15px"><b>Select Server or Mean of servers</b></label></label>
+							<!-- <div id="comp_server"></div> -->
+							<select id="comp_server" class="server" style="width: 50%"></select>
+						</div>
+						<div class="ui form">
+							<div class="inline fields">
+								<label for="fruit"><span style="font-size: 15px"><b>Metric</b></span></label>
+								<div class="field">
+									<div class="ui radio checkbox">
+										<input type="radio" id="AVG_CPU" class="metric_cls" name="metric_check" >
+										<label>AVG_CPU</label>
+									</div>
+								</div>
+								<div class="field">
+									<div class="ui radio checkbox">
+										<input type="radio" id="AVG_RAM" class="metric_cls" name="metric_check" >
+										<label>AVG_RAM</label>
+									</div>
+								</div>
+								<div class="field">
+									<div class="ui radio checkbox">
+										<input type="radio" id="DISK_USED" class="metric_cls" name="metric_check" >
+										<label>DISK_USED</label>
+									</div>
+								</div>
+								<div class="field">
+									<div class="ui radio checkbox">
+										<input type="radio" id="MAX_CPU" class="metric_cls" name="metric_check" >
+										<label>MAX_CPU</label>
+									</div>
+								</div>
+								<div class="field">
+									<div class="ui radio checkbox">
+										<input type="radio" id="MAX_RAM" class="metric_cls" name="metric_check" >
+										<label>MAX_RAM</label>
+									</div>
+								</div>
+							</div>
+							<input type="radio" id="none" class="metric_cls" name="metric_check" hidden checked>
+							<!-- <div class="ui "></div> -->
+							<!-- <div class="ui segment " id="container" style="width:100%; height:600px;"></div> -->
+						</div>
+					<!-- </div> -->
+				</div>
+				<div id="comp_server"></div>	
+			</div>
+			<div id="loader"></div>
+			<div id="tester" ></div>
+		</div>
+		</center>
+	</body>
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html>
+<head>
+	{% load staticfiles %}
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <script type="text/javascript" src="{% static 'js/jquery-3.3.1.min.js' %}"></script>
+    <link rel="stylesheet" type="text/css" href="{% static 'css/semantic.css' %}">
+    <script type="text/javascript" src="{% static 'js/semantic.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/highcharts.js' %}"></script>
+    <script type="text/javascript" src="{% static 'js/stock.js' %}"></script>
+    
+	<title>LeanKloud</title>
+	<script type="text/javascript">
+	
+</script>
+</head>
+<body>
+<h1 class="ui center aligned header">Responsive UI Examples</h1>
+
+<script type="text/javascript">
+
+	var seriesOptions = [],
+    seriesCounter = 0,
+    names = ['AVG_CPU', 'AVG_RAM', 'DISK_USED', 'MAX_CPU', 'MAX_RAM'];
+
+/**
+ * Create the chart when all data is loaded
+ * @returns {undefined}
+ */
+//dataArray contains the array of data [[x1, y1], [x2, y2], ...]
+//x is Date, y is temperature value (say)
+
+var minDate = dataArray[0][0];
+var maxDate = dataArray[dataArray.length - 1][0];
+
+//Disable use of UTC
+Highcharts.setOptions({
+    global: {
+        useUTC: false
+    }
+});
+
+//Create graph options
+var chartOption = {
+    chart: {
+        type: graphType, //line, bar, column, etc
+        renderTo: 'graph-container', //div where my graph will be drawn
+        zoomType: 'x' //Making x-axis zoomable/scrollable
+    },
+    title: {
+        text: 'Data from last 6 hours'
+    },
+    subtitle: {
+        text: document.ontouchstart === undefined ?
+            'Click and drag in the plot area to zoom in' :
+            'Pinch the chart to zoom in'
+    },
+    xAxis: {
+        title: {
+            text: null
+        },
+        type: 'datetime', //For time series, x-axis labels will be time
+        labels: {
+            //You can format the label according to your need
+            format: '{value:%H:%m}'
+        },
+        min: minDate,
+        max: maxDate,
+        minPadding: 0.05,
+        maxPadding: 0.05
+    },
+    yAxis: {
+        title: {
+            text: null
+        }
+    },
+    scrollbar: {
+        enabled: true
+    },
+    series: [{
+        name: "Temperature", //Name of the series
+        data: dataArray
+    }],
+    exporting: {
+        enabled: false
+    },
+    credits : {
+        enabled: false
+    }
+};
+
+//Finally create the graph
+var myChart = new Highcharts.Chart(chartOption);
+
+$.each(names, function (i, name) {
+
+    $.getJSON("{% url 'getdata' 'python'%}/"+name,    function (data) {
+
+        seriesOptions[i] = {
+            name: name,
+            data: data
+        };
+
+        // As we're loading the data asynchronously, we don't know what order it will arrive. So
+        // we keep a counter and create the chart when all the data is loaded.
+        seriesCounter += 1;
+
+        if (seriesCounter === names.length) {
+            createChart();
+        }
+    });
+});
+$(document).ready(
+    function () {
+
+        $('.ui.radio.checkbox')
+			 .checkbox();
+			 var $server = '';
+			 var company = '';
+			 var $metric = '';
+		 $("input[type=radio]").change(function(){
+
+		 	$("input:radio[name=company]:checked").each(function () {
+            company=  $(this).attr("id");
+            alert(company);
+            $.ajax({
+			  url: "{% url 'get_servers' ''%}"+company,
+			  cache: false,
+			  success: function(data){
+			    console.log(data);
+			    var response = data;
+			$("#server_remove").remove();
+			// this would go in your ajax success handler
+			$.each(response, function (key, value) {
+			    var li = $('<div id="server_remove"><div class="field"><div class="ui radio checkbox"> <input type="radio" name="server" id="' + key + '" checked="" tabindex="0" class="hidden"><label> '+ value + '</label> </div></div></div>');
+			    // $*('#server_remove').remove();
+
+			    $('#server_append').append(li);
+			});
+			  }
+			});
+            
+       			 });
+		 	$("input:radio[name=server]:checked").each(function () {
+            $server =  $(this).attr("id") 
+       			 });
+		 	$("input:radio[name=metric]:checked").each(function () {
+            $metric =  $(this).attr("id") 
+       			 });
+		 	var $server_check = $('input[name=server]:checked');
+		 	// var $server = $server_check.attr('id').toLowerCase();
+		 	var $company_check = $('input[name=company]:checked');
+		 	// var $company = $('input[name=company]').attr('id').toLowerCase();
+		 	var $metric_check = $('input[name=metric]:checked');
+		 	// var $metric = $('input[name=metric]').attr('id').toLowerCase();
+		 	
+		    
+		    $.getJSON("{% url 'getdata' %}"+company+"/"+$metric,    function (data) {
+
+        seriesOptions[i] = {
+            name: name,
+            data: data
+        };
+
+        // As we're loading the data asynchronously, we don't know what order it will arrive. So
+        // we keep a counter and create the chart when all the data is loaded.
+        seriesCounter += 1;
+
+        if (seriesCounter === names.length) {
+            createChart();
+        }
+    });
+		});
+});
+
+
+</script>
+<h2 class="ui center aligned header">Basic Responsive</h2>
+
+
+<h3 class="ui center aligned header">Container</h3>
+<div class="ui container">
+  <div class="ui segments">
+  	<div class="ui form">
+	  <div class="inline fields">
+	    <label for="fruit">Select your favorite fruit:</label>
+	    {% for id, company in companies.items %}
+		    <div class="field">
+		      <div class="ui radio checkbox">
+		        <input type="radio" name="company" id={{id}} checked="" {% if forloop.counter == 1 %}{% endif %} tabindex="0" class="hidden">
+		        <label>{{company}}</label>
+		      </div>
+		    </div>
+		{% endfor %}
+		
+	  </div>
+	  <div class="ui form">
+	  <div class="inline fields">
+	    <label for="fruit">Select your favorite fruit:</label>
+	    <div id="server_append">
+	    		
+			</div>
+			<div id="server_remove">
+			</div>
+			<div class="field">
+		      <div class="ui radio checkbox">
+		        <input type="radio" name="server" checked tabindex="0" class="hidden">
+		        <label>Mean</label>
+		      </div>
+		    </div>
+		
+	  </div>
+	  <div class="ui form">
+	  <div class="inline fields">
+	    <label for="fruit">Select your favorite fruit:</label>
+		    <div class="field">
+		      <div class="ui radio checkbox">
+		        <input type="radio" id="AVG_CPU" name="metric" checked="" tabindex="0" class="hidden">
+		        <label>AVG_CPU</label>
+		      </div>
+		    </div>
+		    <div class="field">
+		      <div class="ui radio checkbox">
+		        <input type="radio" id="AVG_RAM" name="metric" checked="" tabindex="0" class="hidden">
+		        <label>AVG_RAM</label>
+		      </div>
+		    </div>
+		    <div class="field">
+		      <div class="ui radio checkbox">
+		        <input type="radio" id="DISK_USED" name="metric" checked="" tabindex="0" class="hidden">
+		        <label>DISK_USED</label>
+		      </div>
+		    </div>
+		    <div class="field">
+		      <div class="ui radio checkbox">
+		        <input type="radio" id="MAX_CPU" name="metric" checked="" tabindex="0" class="hidden">
+		        <label>MAX_CPU</label>
+		      </div>
+		    </div>
+		    <div class="field">
+		      <div class="ui radio checkbox">
+		        <input type="radio" id="MAX_RAM" name="metric" checked="" tabindex="0" class="hidden">
+		        <label>MAX_RAM</label>
+		      </div>
+		    </div>
+		    <input type="radio" name="metric" checked tabindex="0" hidden>
+		
+	  </div>
+
+    	<!-- <div class="ui "></div> -->
+    	<div class="ui segment " id="container" style="width:100%; height:600px;"></div>
+
+
+</div>
+  </div>
+
+</div>
+
+
+	<button class="ui button">Follow</button>
+
+</body>
+
+</html>

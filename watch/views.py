@@ -171,19 +171,20 @@ def index(request):
 	print(total_time)
 	return render(request, "watch/home.html", context = {'args':'lok', 'companies':company, 'servers':json.dumps(di)})
 
-def get_data(request, company=None, metric=None, server=None ):
+def get_data(request, company=None, metric=None, server=None):
 
 
 	from django.db.models import Count, Avg
 	from time import mktime
 	start = time()
-	print(start)
 	print(company)
 	print(server)
+	print(metric)
 	# start = request.GET.get('start', None)
 	# end = request.GET.get('end', None)
 	returning_json = OrderedDict()
-
+	if server == 'Mean':
+		print('asfjkgsdf')
 	if metric is not None:
 		metrics = [metric]
 	else:
@@ -191,21 +192,25 @@ def get_data(request, company=None, metric=None, server=None ):
 
 	for metric in metrics:
 		returning_json[metric] = OrderedDict()
-
 	if company is not None:
 
-		for metric in metrics:
-			if server is not None:
-				server_usage = ServerUsage.objects.filter(detail_id__department_name = company, detail_id__metric = metric, server_name = server).order_by('date_time').annotate(dcount = Count('date_time')).values('date_time').annotate(score = Avg('units'))	
+		for metric_temp in metrics:
+			if (server) and (server != 'Mean'):
+				print(company, metric_temp, server)
+				server_usage = ServerUsage.objects.filter(detail_id__department_name = company, detail_id__metric = metric_temp, server_name = server).order_by('date_time').annotate(dcount = Count('date_time')).values('date_time').annotate(score = Avg('units'))	
+			elif server is 'Mean':
+				print(company, metric_temp)
+				server_usage = ServerUsage.objects.filter(detail_id__department_name = company, detail_id__metric = metric_temp).order_by('date_time').annotate(dcount = Count('date_time')).values('date_time').annotate(score = Avg('units'))	
 			else:
-				server_usage = ServerUsage.objects.filter(detail_id__department_name = company, detail_id__metric = metric).order_by('date_time').annotate(dcount = Count('date_time')).values('date_time').annotate(score = Avg('units'))
+				server_usage = ServerUsage.objects.filter(detail_id__department_name = company, detail_id__metric = metric_temp).order_by('date_time').annotate(dcount = Count('date_time')).values('date_time').annotate(score = Avg('units'))
 			date_ = []
 			usage = []
+			print(server_usage)
 			for each_server in server_usage:
 				date_.append(each_server['date_time'])
 				usage.append(each_server['score'])
-			returning_json[metric]['date_time'] = date_
-			returning_json[metric]['usage'] = usage
+			returning_json[metric_temp]['date_time'] = date_
+			returning_json[metric_temp]['usage'] = usage
 				# returning_json[metric].append([mktime(server['date_time'].timetuple()), server['score']])
 	# ServerUsage.objects.filter(detail_id__department_name = company.lower()).values('date_time', 'units')
 	total_time = time() - start
