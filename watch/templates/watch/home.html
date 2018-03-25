@@ -42,7 +42,7 @@
 			function mean_all_graph(company) {
 				$('#tester').empty();
 				$("#none").prop("checked", true);
-				Plotly.d3.json("/check/"+company, function(err, rows){
+				Plotly.d3.json(company, function(err, rows){
 					
 				var data_ =[];
 				 $.each(rows,function(i,v){
@@ -187,7 +187,7 @@
 			
 				function new_graph(company, metric, server){
 					$('#tester').empty();
-					Plotly.d3.json("/check/"+company+"/"+metric+"/"+server, function(err, rows){
+					Plotly.d3.json(company+"/"+metric+"/"+server, function(err, rows){
 					 
 					var data_ =[];
 					$.each(rows,function(i,v){
