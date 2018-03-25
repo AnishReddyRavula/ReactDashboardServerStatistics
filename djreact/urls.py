@@ -24,7 +24,7 @@ urlpatterns = [
 
     url(r'^data/(?P<company>[A-Za-z-]*)$',views.parse_csv, name= 'parse'),
 
-    url(r'check$', views.index, name='sd'),
+    url(r'$', views.index, name='sd'),
 
     # url(r'check/(?P<company>[A-Za-z_-]*)$', views.get_data, name='getdata'),
     url(r'check/(?P<company>[A-Za-z_-]*)$', views.get_data, name='getdata'),
